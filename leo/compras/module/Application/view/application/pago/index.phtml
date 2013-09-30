@@ -1,0 +1,77 @@
+<link href="/compras/public/css/select2.css" rel="stylesheet"/>
+<link href="/compras/public/css/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
+<script src="/compras/public/js/select2.js"></script>
+<script src="/compras/public/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+<script type="text/javascript">
+    var placeholder = "Seleccionar";
+    
+    $(document).ready(function(){
+        
+        $("#tipo").select2({
+            placeholder: placeholder
+            , width: 'resolve'
+            , allowClear: true
+        });
+        
+        $("#fecha_pago").datepicker({
+           dateFormat: "yy/mm/dd" 
+        });
+        
+        $("#btnguardar").click(function(){
+            var form = {};
+            form.monto_t = $("#monto_total").val();
+            form.monto_p = $("#monto_pagado").val();
+            form.fecha_c = $("#fecha_compra").val();
+            form.fecha_v = $("#fecha_vencimiento").val();
+            form.divisa = $("#divisa").val();
+            $.ajax({
+                url:'http://localhost/compras/public/application/compra/getdata'
+                ,data:{form:form}
+                ,type:'post'
+                ,datatype:'json'
+                ,async:true
+                ,success:function(response){
+                    
+                }
+            });
+        });
+        
+        
+    });
+    
+</script>
+<style type="text/css">
+    
+    
+    
+</style>
+<div class="container">
+    
+    <form id="idform" class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="monto" class="col-lg-2 control-label">Monto : </label>
+            <div class="col-lg-4">
+                <input type="text" id="monto" class="form-control" placeholder="0.00" name="monto">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tipo" class="col-lg-2 control-label">Tipo : </label>
+            <div class="col-lg-4">
+                <select id="tipo" name="tipo">
+                    <option ></option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="puntos">Puntos</option>
+                    <option value="tarjeta">Tarjeta</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha_pago" class="col-lg-2 control-label">Fecha de Pago: </label>
+            <div class="col-lg-4">
+                <input type="text" id="fecha_pago" class="form-control" name="fecha_pago">
+            </div>
+        </div>
+        <button id="btnguardar" type="button" class="btn btn-primary">Guardar</button>
+    </form>
+</div>

@@ -1,0 +1,88 @@
+<link href="/compras/public/css/select2.css" rel="stylesheet"/>
+<link href="/compras/public/css/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
+<script src="/compras/public/js/select2.js"></script>
+<script src="/compras/public/js/jquery-ui-1.10.3.custom.min.js"></script>
+
+<script type="text/javascript">
+    var placeholder = "Seleccionar";
+    
+    $(document).ready(function(){
+        
+        $("#divisa").select2({
+            placeholder: placeholder
+            , width: 'resolve'
+            , allowClear: true
+        });
+        
+        $("#fecha_compra,#fecha_vencimiento").datepicker({
+           dateFormat: "yy/mm/dd" 
+        });
+        
+        $("#btnguardar").click(function(){
+            var form = {};
+            form.monto_t = $("#monto_total").val();
+            form.monto_p = $("#monto_pagado").val();
+            form.fecha_c = $("#fecha_compra").val();
+            form.fecha_v = $("#fecha_vencimiento").val();
+            form.divisa = $("#divisa").val();
+            $.ajax({
+                url:'http://localhost/compras/public/application/compra/getdata'
+                ,data:{form:form}
+                ,type:'post'
+                ,datatype:'json'
+                ,async:true
+                ,success:function(response){
+                    
+                }
+            });
+        });
+        
+        
+    });
+    
+</script>
+<style type="text/css">
+    
+    
+    
+</style>
+<div class="container">
+    
+    <form id="idform" class="form-horizontal" role="form">
+        <div class="form-group">
+            <label for="monto_total" class="col-lg-2 control-label">Monto Total: </label>
+            <div class="col-lg-4">
+                <input type="text" id="monto_total" class="form-control" placeholder="montol total" name="monto_total">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="monto_pagado" class="col-lg-2 control-label">Monto Pagado: </label>
+            <div class="col-lg-4">
+                <input type="text" id="monto_pagado" class="form-control" placeholder="monto pagado" name="monto_pagado">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha_compra" class="col-lg-2 control-label">Fecha de Compra: </label>
+            <div class="col-lg-4">
+                <input type="text" id="fecha_compra" class="form-control" name="fecha_compra">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha_vencimiento" class="col-lg-2 control-label">Fecha de Vencimiento: </label>
+            <div class="col-lg-4">
+                <input type="text" id="fecha_vencimiento" class="form-control" name="fecha_vencimiento">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="divisa" class="col-lg-2 control-label">Divisa: </label>
+            <div class="col-lg-4">
+                <select id="divisa" name="divisa" style="width:250px">
+                    <option value=""></option>
+                    <option value="Soles">Soles</option>
+                    <option value="Dolares">Dolares</option>
+                </select>
+            </div>
+        </div>
+        <button id="btnguardar" type="button" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
