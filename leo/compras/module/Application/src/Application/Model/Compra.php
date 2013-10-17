@@ -23,5 +23,21 @@ class Compra extends TableGateway{
         $this->insert($data);
     }
     
+    public function getDataCompra(){
+        $data = $this->select()->toArray();
+        return $data;
+    }
+    
+    public function actualizarmonto($form) {
+        $row = $this->select(array('idCompra' => $form['id']))->current();
+        $row['monto_pagado'] = $row['monto_pagado'] + $form['monto'];
+        $data = array(
+            'monto_pagado' => $row['monto_pagado']
+        );
+        $this->update($data, array('idCompra' => $form['id']));
+        
+        return $row['fecha_vencimiento_pago'];
+    }
+    
 }
 ?>

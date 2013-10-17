@@ -24,12 +24,11 @@ class CompraController extends AbstractActionController
         return new ViewModel();
     }
 
-    public function getdataAction(){
+    public function saveAction(){
         $form =$this->getRequest()->getPost('form');
         $this -> dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
         $o_compra = new Compra($this->dbAdapter);
         $o_compra->guardarCompra($form);
-        //print_r($form['divisa']);die();
         return $this->getResponse();
     }
 }

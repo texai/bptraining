@@ -11,25 +11,50 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\Db\Adapter\Adapter;
 use Application\Model\Pago;
+use Application\Model\Compra;
+use Application\Model\Notificacion;
+
+
 
 
 class PagoController extends AbstractActionController
 {
     public $dbAdapter;
-    
-    public function indexAction()
-    {
-        return new ViewModel();
-    }
-
-    public function getdxpagoAction(){
-        $form =$this->getRequest()->getPost('form');
+    public function indexAction(){
+        
         $this -> dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        $o_pago = new Compra($this->dbAdapter);
+        $a_data = $o_pago->getDataCompra();
+        
+        $view = new ViewModel();
+        $view->datacompra = $a_data;
+        return $view;
+    }
+    
+    public function updateAction(){
+        
+        $this -> dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+        
+        $post = $this->getRequest()->getPost('actualizacion');        
         $o_compra = new Compra($this->dbAdapter);
-        $o_compra->guardarCompra($form);
-        //print_r($form['divisa']);die();
+        $fecha_venci = $o_compra->actualizarmonto($post);
+        
+        $o_pago = new Pago($this->dbAdapter);
+        $idpago = $o_pago->insertarpago($post);
+
+        if(strtotime($fecha_venci) >= strtotime($post['fecha']))
+            $estado = 'pagado';
+        else
+            $estado = 'vencido';
+        
+        $o_notificacion = new Notificacion($this->dbAdapter);        
+        $o_notificacion->insertar($idpago,$estado);
+//         $this->redirect()->toRoute('default', array(
+//                    'controller' => 'Index',
+//                    'action'     => 'index',
+//                ));
         return $this->getResponse();
+       //return $this->response->setContent(json_encode(array($fecha_venci)));
     }
 }

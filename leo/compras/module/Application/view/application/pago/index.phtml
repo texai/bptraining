@@ -1,10 +1,9 @@
-<link href="/compras/public/css/select2.css" rel="stylesheet"/>
-<link href="/compras/public/css/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
-<script src="/compras/public/js/select2.js"></script>
-<script src="/compras/public/js/jquery-ui-1.10.3.custom.min.js"></script>
+
 
 <script type="text/javascript">
     var placeholder = "Seleccionar";
+    var id_compra;
+    
     
     $(document).ready(function(){
         
@@ -15,63 +14,115 @@
         });
         
         $("#fecha_pago").datepicker({
-           dateFormat: "yy/mm/dd" 
+           dateFormat: "yy-mm-dd" 
         });
         
-        $("#btnguardar").click(function(){
-            var form = {};
-            form.monto_t = $("#monto_total").val();
-            form.monto_p = $("#monto_pagado").val();
-            form.fecha_c = $("#fecha_compra").val();
-            form.fecha_v = $("#fecha_vencimiento").val();
-            form.divisa = $("#divisa").val();
+        $('.pagar').tooltip();      
+        
+        $('#table_compras').on('click','.pagar',function(){
+            id_compra = $(this).data('id');
+            $('#modal_pago').modal('show');
+        });
+        
+        $('#btnpagar').click(function(){
+            var actualizacion = {};
+            actualizacion.id = id_compra;
+            actualizacion.monto = $('#monto').val();
+            actualizacion.tipo = $('#tipo').val();
+            actualizacion.fecha = $('#fecha_pago').val();
             $.ajax({
-                url:'http://localhost/compras/public/application/compra/getdata'
-                ,data:{form:form}
+                url:'/application/pago/update'
+                ,data:{actualizacion:actualizacion}
                 ,type:'post'
                 ,datatype:'json'
-                ,async:true
-                ,success:function(response){
-                    
+                ,success:function(request){                    
+                    $('#modal_pago').modal('hide');
+                    $(location).attr('href',"<?php echo $this->url('pago') ?>");                 
                 }
             });
         });
+
         
-        
-    });
+});
     
 </script>
+
 <style type="text/css">
-    
-    
-    
+    .place{
+        margin-top: 50px;
+    }
 </style>
-<div class="container">
-    
-    <form id="idform" class="form-horizontal" role="form">
-        <div class="form-group">
-            <label for="monto" class="col-lg-2 control-label">Monto : </label>
-            <div class="col-lg-4">
-                <input type="text" id="monto" class="form-control" placeholder="0.00" name="monto">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="tipo" class="col-lg-2 control-label">Tipo : </label>
-            <div class="col-lg-4">
-                <select id="tipo" name="tipo">
-                    <option ></option>
-                    <option value="efectivo">Efectivo</option>
-                    <option value="puntos">Puntos</option>
-                    <option value="tarjeta">Tarjeta</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="fecha_pago" class="col-lg-2 control-label">Fecha de Pago: </label>
-            <div class="col-lg-4">
-                <input type="text" id="fecha_pago" class="form-control" name="fecha_pago">
-            </div>
-        </div>
-        <button id="btnguardar" type="button" class="btn btn-primary">Guardar</button>
-    </form>
+
+<?php
+    $title = 'Pago';
+    $this->headTitle($title);
+?>
+
+<blockquote><h1>Pagar &nbsp;<span class="glyphicon glyphicon-credit-card"></span></h1></blockquote>
+
+<div class="table-responsive place" style="text-align: center">
+    <table id="table_compras" class="table table-bordered">
+        <tr>
+            <th>Monto Total</th>
+            <th>Monto Pagado</th>
+            <th>Fecha de compra</th>
+            <th>Fecha de vencimiento</th>
+            <th>Acciones</th>
+        </tr>
+        <?php foreach ($this->datacompra as $dxcompra): ?>
+            <tr>
+                <td><?php echo $dxcompra['monto_total']; ?></td>
+                <td><?php echo $dxcompra['monto_pagado']; ?></td>
+                <td><?php echo $dxcompra['fecha_compra']; ?></td>
+                <td><?php echo $dxcompra['fecha_vencimiento_pago']; ?></td>
+                <td>
+                    <a data-id="<?php echo $dxcompra['idCompra']; ?>" type="button" class="btn btn-default btn-xs pagar" data-toggle="tooltip" title="Pagar">
+                        <span class="glyphicon glyphicon-usd"></span>
+                    </a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
 </div>
+
+<div class="modal fade" id="modal_pago" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Asistente de Pago</h4>
+        </div>
+        <div class="modal-body">
+            <form id="idform"  role="form">
+                <div class="form-group">
+                    <label for="monto" class="control-label">Monto a Pagar: </label>
+                    <div class="">
+                        <input type="text" id="monto" class="form-control" placeholder="0.00" name="monto">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tipo" class="control-label">Tipo de Pago: </label>
+                    <div class="">
+                        <select id="tipo" name="tipo" style="width: 300px">
+                            <option></option>
+                            <option value="efectivo">Efectivo</option>
+                            <option value="puntos">Puntos</option>
+                            <option value="tarjeta">Tarjeta</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_pago" class="control-label">Fecha de Pago: </label>
+                    <div class="">
+                        <input type="text" id="fecha_pago" class="form-control" name="fecha_pago">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button id="btnpagar" type="button" class="btn btn-primary">Aceptar</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->

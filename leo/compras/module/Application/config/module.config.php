@@ -20,6 +20,29 @@ return array(
                     ),
                 ),
             ),
+            //codigo agregado --------------------------------------------------
+            'compra' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/application/compra',
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Compra',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            'pago' => array(
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => array(
+                    'route'    => '/application/pago',
+                    'defaults' => array(
+                        'controller' => 'Application\Controller\Pago',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
+            
+            //------------------------------------------------------------------
             // The following is a route to simplify getting started creating
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
@@ -75,7 +98,8 @@ return array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController',
             'Application\Controller\Compra' => 'Application\Controller\CompraController',
-            'Application\Controller\Pago' => 'Application\Controller\PagoController'
+            'Application\Controller\Pago' => 'Application\Controller\PagoController',
+            'Application\Controller\Notificacion' => 'Application\Controller\NotificacionController'
         ),
     ),
     'view_manager' => array(
